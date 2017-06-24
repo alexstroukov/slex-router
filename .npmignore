@@ -1,0 +1,6 @@
+node_modules/
+compiled/
+npm-debug.log
+.vscode
+.gitignore
+jsconfig.json
