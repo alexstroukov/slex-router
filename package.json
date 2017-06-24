@@ -25,7 +25,7 @@
     "typings": "typings",
     "clean": "rm -rf compiled",
     "deep-clean": "rm -rf node_modules && npm run clean",
-    "prepublish": "rm -rf compiled && webpack --config webpack/router.webpack.config.js"
+    "prepublish": "rm -rf compiled && webpack --config webpack/src.webpack.config.js"
   },
   "dependencies": {
     "rx": "4.1.0",
