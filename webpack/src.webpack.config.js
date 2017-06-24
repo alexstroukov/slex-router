@@ -1,7 +1,7 @@
 const path = require('path')
 
 const config = {
-  entry: '../index',
+  entry: '../src/index',
   devtool: 'source-map',
   context: __dirname,
   target: 'web',
@@ -12,7 +12,7 @@ const config = {
 
   output: {
     path: path.resolve(__dirname, '../compiled'),
-    filename: 'router.js',
+    filename: 'slexRouter.js',
     libraryTarget: 'umd',
     pathinfo: true,
     sourceMapFilename: '[file].map',
@@ -27,7 +27,7 @@ const config = {
       {
         test: /(\.jsx|\.js)$/,
         include: [
-          path.resolve(__dirname, '../')
+          path.resolve(__dirname, '../src')
         ],
         loader: 'babel-loader',
         options: {

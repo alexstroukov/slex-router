@@ -1,8 +1,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import router from '../router'
+import slexRouter from '../src/slexRouter'
 
-describe('router store', function () {
+describe('slexRouter', function () {
   const sandbox = sinon.sandbox.create()
   beforeEach(function () {
     sandbox.restore()

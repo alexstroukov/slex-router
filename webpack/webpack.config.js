@@ -1,7 +1,7 @@
-const routerConfig = require('./router.webpack.config')
+const srcConfig = require('./src.webpack.config')
 const testConfig = require('./test.webpack.config')
 
 module.exports = [
-  routerConfig,
+  srcConfig,
   testConfig
 ]
