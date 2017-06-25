@@ -3,7 +3,7 @@
 ## Install
 
 ```
-  npm i router
+  npm i slex-router
 ```
 
 ## Usage

@@ -1,7 +1,7 @@
 import Rx from 'rx'
 import _ from 'lodash'
 
-class Router {
+class SlexRouter {
 
   constructor () {
     this._tryMatchRoute = this._tryMatchRoute.bind(this)
@@ -113,4 +113,4 @@ class Router {
   }
 }
 
-export default new Router()
+export default new SlexRouter()

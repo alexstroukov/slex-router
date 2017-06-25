@@ -1,1 +1,1 @@
-import './router.test'
+import './slexRouter.test'
