@@ -4,6 +4,7 @@ import _ from 'lodash'
 class SlexRouter {
 
   constructor () {
+    this._processParam = this._processParam.bind(this)
     this._tryMatchRoute = this._tryMatchRoute.bind(this)
     this._getRelevantPath = this._getRelevantPath.bind(this)
     this._isNumber = this._isNumber.bind(this)
@@ -78,25 +79,73 @@ class SlexRouter {
       .map(part => part.replace(/(:|\*)+/g, ''))
   }
 
-
   _tryMatchRoute (routes, path) {
-    for (let { pattern, paramNamesOrder, routePattern, route } of routes) {
-      const match = pattern.exec(path)
-      if (match) {
-        const extras = this._popRouteExtras({ path })
-        const routeState = _.chain(match)
-          .slice(1)
-          .map((param, index) => {
-            if (this._isNumber(param)) param = +param
-            return param
-          })
-          .reduce((routeState, next, index) => {
-            routeState[paramNamesOrder[index]] = next
-            return routeState
-          }, { path, routePattern, extras })
-          .value()
-        return { route, routeState }
-      }
+    const result = _.chain(routes)
+      .find(route => route.pattern.test(path))
+      .thru(matchedRoute => {
+        if (matchedRoute) {
+          const { pattern, paramNamesOrder, routePattern, route } = matchedRoute
+          const match = pattern.exec(path)
+          const extras = this._popRouteExtras({ path })
+          const routeState = _.chain(match)
+            .slice(1)
+            .map(this._processParam)
+            .reduce((routeState, next, index) => {
+              if (_.isString(next) && next.includes('/')) {
+                const speadState = _.chain(next)
+                  .split('/')
+                  .map((item, index) => ({ item, index }))
+                  .partition(({ item, index }) => {
+                    return index % 2 === 0
+                  })
+                  .unzip()
+                  .zipWith(([{ item: key }, { item: value }]) => {
+                    return { [key]: this._processParam(value) }
+                  })
+                  .reduce((memo, next) => ({ ...memo, ...next }), {})
+                  .value()
+                return {
+                  ...routeState,
+                  ...speadState
+                }
+              } else {
+                return {
+                  ...routeState,
+                  [paramNamesOrder[index]]: next
+                }
+              }
+            }, { path, routePattern, extras })
+            .value()
+          return { route, routeState }
+        } else {
+          const defaultRoute = _.chain(routes)
+            .find(route => route.routePattern === 'default')
+            .value()
+          if (defaultRoute) {
+            const { route, routePattern } = defaultRoute
+            const routeState = {
+              extras: {},
+              path,
+              routePattern
+            }
+            return {
+              route,
+              routeState
+            }
+          } else {
+            return undefined
+          }
+        }
+      })
+      .value()
+    return result
+  }
+
+  _processParam (param) {
+    if (this._isNumber(param)) {
+      return +param
+    } else {
+      return param
     }
   }
 

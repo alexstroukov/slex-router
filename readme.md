@@ -4,7 +4,7 @@
 $ npm install slex-router
 ```
 
-`slex-router` is simple client side router which exposes an `rx` stream.
+`slex-router` is a simple client side router which exposes an `rxjs` stream.
 
 ## Example Usage
 
@@ -17,19 +17,27 @@ const routes = {
     ...anything
   },
   '/item/:id': {
-    name: 'item-details',
+    name: 'itemDetails',
     ...anything
   },
   '/item/:id/child/:childId': {
-    name: 'item-details-deep',
+    name: 'itemDetailsDeep',
+    ...anything
+  },
+  '/*params': {
+    name: 'wildcardRoute',
+    ...anything
+  }
+  'default': {
+    name: 'defaultRoute',
     ...anything
   }
 }
 
 const router = slexRouter
-  .createStream(this.routes)
+  .createStream(routes)
 
-store.subscribe(nextRoute => {
+router.subscribe(nextRoute => {
   const { route, routeState } = nextRoute
   const { name, ...anything } = route
   const { id, childId } = routeState
