@@ -44,7 +44,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/item/1')
+        window.location.hash = '/item/1'
       })
       it('should provide the route with the route name and any other properties in the route object', function () {
         const router = slexRouter
@@ -80,7 +80,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/')
+        window.location.hash = '/'
       })
       it('should return the registered base route', function () {
         const router = slexRouter
@@ -101,7 +101,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/about')
+        window.location.hash = '/about'
       })
       it('should return the registered unparameterised route', function () {
         const router = slexRouter
@@ -122,7 +122,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/about/plants')
+        window.location.hash = '/about/plants'
       })
       it('should return the registered unparameterised nested route', function () {
         const router = slexRouter
@@ -143,7 +143,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/item/1')
+        window.location.hash = '/item/1'
       })
       it('should return the registered parametarised route', function () {
         const router = slexRouter
@@ -175,7 +175,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/item/1/child/2')
+        window.location.hash = '/item/1/child/2'
       })
       it('should return the registered parametarised route', function () {
         const router = slexRouter
@@ -208,7 +208,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/item/1/child/2')
+        window.location.hash = '/item/1/child/2'
       })
       it('should return the registered parametarised route', function () {
         const router = slexRouter
@@ -241,7 +241,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/dashboard/summaries/item/1/child/2')
+        window.location.hash = '/dashboard/summaries/item/1/child/2'
       })
       it('should return the registered parametarised route', function () {
         const router = slexRouter
@@ -275,7 +275,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/dashboard/item/1/child/2')
+        window.location.hash = '/dashboard/item/1/child/2'
       })
       it('should return the registered parametarised route', function () {
         const router = slexRouter
@@ -308,7 +308,7 @@ describe('slexRouter', function () {
         }
       }
       beforeEach(function () {
-        jsdom.changeURL(window, 'https://example.com/#/')
+        window.location.hash = '/'
       })
       it('should return the registered default route', function () {
         const router = slexRouter
@@ -325,10 +325,90 @@ describe('slexRouter', function () {
   })
 
   describe('push', function () {
-    it('should trigger a url change')
+    const routes = {
+      '/': {
+        name: 'home'
+      },
+      '/about': {
+        name: 'about'
+      }
+    }
+    beforeEach(function () {
+      window.location.hash = '/'
+    })
+    it('should trigger a url change', function () {
+      const router = slexRouter
+        .createStream(routes)
+        .skip(1)
+        .first()
+        .toPromise()
+        .then(nextRoute => {
+          const { route } = nextRoute
+          expect(route.name).to.equal('about')
+        })
+      slexRouter.push({ path: '/about' })
+      return router
+    })
+    it('should pass through the given extras in routeState', function () {
+      const extras = {}
+      const router = slexRouter
+        .createStream(routes)
+        .skip(1)
+        .first()
+        .toPromise()
+        .then(nextRoute => {
+          const { routeState } = nextRoute
+          expect(routeState.extras).to.equal(extras)
+        })
+      slexRouter.push({ path: '/about', extras })
+      return router
+    })
   })
 
   describe('replace', function () {
-    it('should trigger a url change and by replacing current url')
+    const routes = {
+      '/': {
+        name: 'home'
+      },
+      '/about': {
+        name: 'about'
+      }
+    }
+    beforeEach(function () {
+      window.location.hash = '/'
+    })
+    it('should trigger a url change', function () {
+      const router = slexRouter
+        .createStream(routes)
+        .skip(1)
+        .first()
+        .toPromise()
+        .then(nextRoute => {
+          const { route } = nextRoute
+          expect(route.name).to.equal('about')
+        })
+      slexRouter.replace({ path: '/about' })
+      return router
+    })
+    it('should pass through the given extras in routeState', function () {
+      const extras = {}
+      const router = slexRouter
+        .createStream(routes)
+        .skip(1)
+        .first()
+        .toPromise()
+        .then(nextRoute => {
+          const { routeState } = nextRoute
+          expect(routeState.extras).to.equal(extras)
+        })
+      slexRouter.replace({ path: '/about', extras })
+      return router
+    })
+    it('should replace the current route', function () {
+      const locationSpy = sandbox.spy(global.window.location, 'replace')
+      slexRouter.replace({ path: '/about' })
+      const path = locationSpy.firstCall.args[0].split('#')[1]
+      expect(path).to.equal('/about')
+    })
   })
 })

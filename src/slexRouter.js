@@ -41,12 +41,12 @@ class SlexRouter {
   }
 
   push ({ path, extras }) {
-    window.location.hash = path
+    global.window.location.hash = path
     this._cacheRouteExtras({ path, extras })
   }
 
   replace ({ path, extras }) {
-    window.location.replace(`${window.location.origin}${window.location.pathname}#${path}`)
+    global.window.location.replace(`${global.window.location.origin}${global.window.location.pathname}#${path}`)
     this._cacheRouteExtras({ path, extras })
   }
 
@@ -150,7 +150,7 @@ class SlexRouter {
   }
 
   _getRelevantPath () {
-    return window.location.hash
+    return global.window.location.hash
       // replace '#' or '#!' followed by any number of '/' until the first character other than / - with just '/'
       .replace(/^#!?\/*/, '/')
       // replace empty string with at least one slash
