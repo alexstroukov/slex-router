@@ -37,9 +37,11 @@ const routes = {
 const router = slexRouter
   .createStream(routes)
 
-router.subscribe(nextRoute => {
+const subscription = router.subscribe(nextRoute => {
   const { route, routeState } = nextRoute
   const { name, ...anything } = route
   const { id, childId } = routeState
 })
+
+subscription.dispose()
 ```
