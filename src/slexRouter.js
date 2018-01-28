@@ -13,29 +13,29 @@ class SlexRouter {
       .distinctUntilChanged()
       .map(this._getRelevantPath)
       .map(path => this._tryMatchRoute(mappedRoutes, path))
-  };
+  }
 
   _cacheRouteExtras = ({ path, extras }) => {
     this.extras = Object.assign({}, this.extras, {
       [path]: extras
     })
-  };
+  }
 
   _popRouteExtras = ({ path }) => {
     const extras = this.extras[path]
     this.extras = _.omit(this.extras, path)
     return extras
-  };
+  }
 
   push = ({ path, extras }) => {
     global.window.location.hash = path
     this._cacheRouteExtras({ path, extras })
-  };
+  }
 
   replace = ({ path, extras }) => {
     global.window.location.replace(`${global.window.location.origin}${global.window.location.pathname}#${path}`)
     this._cacheRouteExtras({ path, extras })
-  };
+  }
 
   _mapRoutesToMatchers = routes => {
     return Object
@@ -57,14 +57,14 @@ class SlexRouter {
 
         return { pattern, paramNamesOrder, routePattern, route }
       })
-  };
+  }
 
   _mapRouteToParamsArray = path => {
       // match any ':params' and '*params'
     return (path.match(/(:|\*)[^\/]+/g) || [])
       // and remove their ':' and '*'
       .map(part => part.replace(/(:|\*)+/g, ''))
-  };
+  }
 
   _tryMatchRoute = (routes, path) => {
     const result = _.chain(routes)
@@ -126,7 +126,7 @@ class SlexRouter {
       })
       .value()
     return result
-  };
+  }
 
   _processParam = param => {
     if (this._isNumber(param)) {
@@ -134,7 +134,7 @@ class SlexRouter {
     } else {
       return param
     }
-  };
+  }
 
   _getRelevantPath = () => {
     return global.window.location.hash
@@ -142,11 +142,11 @@ class SlexRouter {
       .replace(/^#!?\/*/, '/')
       // replace empty string with at least one slash
       .replace(/^$/, '/')
-  };
+  }
 
   _isNumber = value => {
     return value !== '' && value !== null && !isNaN(value)
-  };
+  }
 }
 
 export default new SlexRouter()
