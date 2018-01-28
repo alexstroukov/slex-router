@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/alexstroukov/slex-router.svg?style=svg)](https://circleci.com/gh/alexstroukov/slex-router)
+
 # Slex Router
 
 ```
