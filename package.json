@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "rx": "4.1.0",
-    "lodash": "4.17.2"
+    "lodash": "4.17.13"
   },
   "devDependencies": {
     "babel": "6.23.0",
